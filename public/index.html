@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estacionamento</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Vagas Disponíveis: <span id="spots">20</span></h1>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io.connect('http://localhost:3000');
+        const spotsElement = document.getElementById('spots');
+        let availableSpots = 20;
+
+        socket.on('mqttMessage', (message) => {
+            if (message === 'ENTRADA de veiculo!') {
+                availableSpots = Math.max(availableSpots - 1, 0);
+            } else if (message === 'SAIDA de veiculo!') {
+                availableSpots = Math.min(availableSpots + 1, 20);
+            }
+            spotsElement.textContent = availableSpots;
+        });
+    </script>
+</body>
+
+</html>
